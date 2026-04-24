@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angduw Komputer | Toko Laptop Terlengkap</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* --- CSS STYLING --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; }
+        
+        /* Navigasi */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 22px; font-weight: bold; color: #007bff; cursor: pointer; }
+        .logo i { margin-right: 10px; }
+        nav ul { display: flex; list-style: none; align-items: center; }
+        nav ul li { margin-left: 20px; }
+        nav ul li a { text-decoration: none; color: #555; font-weight: 500; cursor: pointer; }
+        .btn-logout { background: #dc3545; color: white !important; padding: 5px 12px; border-radius: 4px; font-size: 14px; }
+
+        /* Halaman */
+        .page-section { display: none; padding: 40px 5%; }
+        .active { display: block; }
+
+        /* Landing Page */
+        .hero { height: 40vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1200') no-repeat center center/cover; 
+                display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; border-radius: 0 0 20px 20px; }
+        
+        /* Katalog & Card */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        .card-body { padding: 15px; }
+        .price { color: #007bff; font-weight: bold; margin: 10px 0; }
+        .btn-buy { width: 100%; background: #ffc107; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* Admin & Table */
+        .admin-box { background: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; font-size: 14px; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        table th { background: #007bff; color: white; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        
+        /* Auth Form */
+        .auth-container { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .auth-container input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .auth-container button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+
+        /* Modal Checkout */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 10px; width: 400px; max-height: 90vh; overflow-y: auto; }
+        .payment-details { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px dashed #ccc; display: none; }
+        .payment-details input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="showPage('home')"><i class="fas fa-laptop-code"></i> Angduw Komputer</div>
+        <ul>
+            <li><a onclick="showPage('home')"><i class="fas fa-home"></i> Home</a></li>
+            <li id="nav-login"><a onclick="showPage('auth')"><i class="fas fa-user"></i> Login/Register</a></li>
+            <li id="nav-admin" style="display:none;"><a onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
+            <li id="nav-logout" style="display:none;"><a onclick="handleLogout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <div id="home" class="page-section active">
+        <header class="hero">
+            <h1>Toko Laptop Murah Serang</h1>
+            <p>Kualitas Bintang Lima, Harga Kaki Lima</p>
+        </header>
+        <div class="product-grid" id="product-list"></div>
+    </div>
+
+    <div id="auth" class="page-section">
+        <div class="auth-container" id="login-box">
+            <h2>Login</h2>
+            <input type="text" id="login-user" placeholder="Username">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button onclick="handleLogin()">Masuk</button>
+            <p onclick="document.getElementById('login-box').style.display='none'; document.getElementById('reg-box').style.display='block';" style="cursor:pointer; color:blue; margin-top:10px;">Daftar Akun Baru</p>
+        </div>
+        <div class="auth-container" id="reg-box" style="display:none;">
+            <h2>Register</h2>
+            <input type="text" id="reg-user" placeholder="Username">
+            <input type="password" id="reg-pass" placeholder="Password">
+            <button onclick="handleRegister()" style="background: green;">Daftar</button>
+            <p onclick="document.getElementById('reg-box').style.display='none'; document.getElementById('login-box').style.display='block';" style="cursor:pointer; color:blue; margin-top:10px;">Sudah punya akun? Login</p>
+        </div>
+    </div>
+
+    <div id="admin" class="page-section">
+        <div class="admin-box">
+            <h3><i class="fas fa-plus-circle"></i> Tambah Produk</h3>
+            <input type="text" id="p-name" placeholder="Nama Produk" style="width:100%; padding:10px; margin:10px 0;">
+            <input type="number" id="p-price" placeholder="Harga" style="width:100%; padding:10px; margin:10px 0;">
+            <input type="file" id="p-image" accept="image/*" onchange="handleFile()" style="margin:10px 0;">
+            <button onclick="saveProduct()" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Simpan</button>
+        </div>
+        <div class="admin-box">
+            <h3><i class="fas fa-list"></i> Kelola Produk</h3>
+            <table>
+                <thead><tr><th>Nama</th><th>Aksi</th></tr></thead>
+                <tbody id="admin-product-list"></tbody>
+            </table>
+        </div>
+        <div class="admin-box">
+            <h3><i class="fas fa-shopping-cart"></i> Pesanan Masuk</h3>
+            <table>
+                <thead><tr><th>Waktu</th><th>Item</th><th>Detail Bayar</th></tr></thead>
+                <tbody id="admin-order-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pay-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="text-align:center;"><i class="fas fa-shopping-cart"></i> Checkout</h3>
+            <p id="pay-item" style="margin:15px 0; font-weight:bold; text-align:center;"></p>
+            
+            <label>Metode Pembayaran:</label>
+            <select id="pay-method" onchange="togglePaymentInputs()" style="width:100%; padding:10px; margin:10px 0;">
+                <option value="">-- Pilih Metode --</option>
+                <option value="Transfer Bank">Transfer Bank / ATM</option>
+                <option value="COD">COD (Bayar di Tempat)</option>
+            </select>
+
+            <div id="bank-input" class="payment-details">
+                <input type="text" id="bank-name" placeholder="Nama Bank (BCA/BRI/BNI)">
+                <input type="text" id="bank-user" placeholder="Nama Pemilik ATM">
+                <input type="number" id="bank-number" placeholder="Nomor Rekening/ATM">
+            </div>
+
+            <div id="cod-input" class="payment-details">
+                <p style="font-size: 14px; color: #333; text-align: center;">Anda memilih metode <b>COD</b>.<br>Silakan konfirmasi pesanan Anda.</p>
+            </div>
+
+            <button onclick="confirmPay()" style="background:#28a745; color:white; border:none; padding:12px; border-radius:5px; width:100%; margin-top:15px; font-weight:bold;">KONFIRMASI PESANAN</button>
+            <button onclick="closeModal()" style="border:none; background:none; color:red; width:100%; margin-top:10px; cursor:pointer;">Batal</button>
+        </div>
+    </div>
+
+    <script>
+        let base64Img = "";
+        let selectedP = {};
+
+        // DATA DEFAULT - DISESUAIKAN DENGAN NAMA FILE ANDA
+        const defaultProducts = [
+            { name: "Laptop Asus Murah", price: "3000000", img: "asus3juta.jpg" },
+            { name: "Laptop Dell", price: "3000000", img: "Dell-Inspiron-14-3452.jpg" },
+            { name: "Komputer Murah", price: "3000000", img: "komputer 3 juta.jpg" },
+            { name: "Laptop Gaming Murah", price: "5000000", img: "leptop asus 5 juta.jpg" },
+          
+        ];
+
+        function showPage(id) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'home') renderHome();
+            if(id === 'admin') renderAdmin();
+        }
+
+        // --- AUTH & ADMIN FUNCTIONS ---
+        function handleRegister() {
+            const u = document.getElementById('reg-user').value;
+            const p = document.getElementById('reg-pass').value;
+            if(u && p) { localStorage.setItem('user_'+u, p); alert("Berhasil Daftar!"); document.getElementById('reg-box').style.display='none'; document.getElementById('login-box').style.display='block'; }
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            if(u === 'admin' && p === 'admin123') { sessionStorage.setItem('isLoggedIn', 'admin'); updateNav(true, true); showPage('admin'); }
+            else if(localStorage.getItem('user_'+u) === p) { sessionStorage.setItem('isLoggedIn', 'user'); updateNav(true, false); showPage('home'); }
+            else { alert("Username atau Password Salah!"); }
+        }
+
+        function handleLogout() { sessionStorage.removeItem('isLoggedIn'); updateNav(false, false); showPage('home'); }
+
+        function updateNav(isLoggedIn, isAdmin) {
+            document.getElementById('nav-login').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('nav-logout').style.display = isLoggedIn ? 'block' : 'none';
+            document.getElementById('nav-admin').style.display = (isLoggedIn && isAdmin) ? 'block' : 'none';
+        }
+
+        function handleFile() {
+            const file = document.getElementById('p-image').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => { base64Img = reader.result; };
+            if(file) reader.readAsDataURL(file);
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            if(!name || !price || !base64Img) return alert("Lengkapi data dan gambar!");
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            products.push({ name, price, img: base64Img });
+            localStorage.setItem('products', JSON.stringify(products));
+            renderAdmin();
+            alert("Produk berhasil ditambah!");
+        }
+
+        function deleteProduct(i) {
+            if(confirm("Hapus produk ini?")) {
+                let products = JSON.parse(localStorage.getItem('products') || '[]');
+                products.splice(i, 1);
+                localStorage.setItem('products', JSON.stringify(products));
+                renderAdmin();
+            }
+        }
+
+        function renderAdmin() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            document.getElementById('admin-product-list').innerHTML = products.map((p, i) => `<tr><td>${p.name}</td><td><button class="btn-delete" onclick="deleteProduct(${i})">Hapus</button></td></tr>`).join('');
+            document.getElementById('admin-order-list').innerHTML = orders.map(o => `<tr><td>${o.time}</td><td>${o.item}</td><td>${o.detail}</td></tr>`).reverse().join('');
+        }
+
+        function renderHome() {
+            let products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            // Logika untuk reset data jika gambar lama rusak atau data kosong
+            if (products.length === 0 || products[0].img.includes('placeholder')) {
+                localStorage.setItem('products', JSON.stringify(defaultProducts));
+                products = defaultProducts;
+            }
+
+            document.getElementById('product-list').innerHTML = products.map(p => `
+                <div class="card">
+                    <img src="${p.img}" onerror="this.src='https://placehold.co/600x400?text=Gambar+Tidak+Ditemukan'">
+                    <div class="card-body">
+                        <h3>${p.name}</h3>
+                        <p class="price">Rp ${parseInt(p.price).toLocaleString()}</p>
+                        <button class="btn-buy" onclick="openPay('${p.name}')">Beli</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function togglePaymentInputs() {
+            const method = document.getElementById('pay-method').value;
+            document.getElementById('bank-input').style.display = method === 'Transfer Bank' ? 'block' : 'none';
+            document.getElementById('cod-input').style.display = method === 'COD' ? 'block' : 'none';
+        }
+
+        function openPay(name) {
+            selectedP = { name };
+            document.getElementById('pay-item').innerText = "Produk: " + name;
+            document.getElementById('pay-modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('pay-modal').style.display = 'none'; }
+
+        function confirmPay() {
+            const method = document.getElementById('pay-method').value;
+            let detail = method;
+            if(!method) return alert("Pilih metode pembayaran!");
+            if(method === 'Transfer Bank') {
+                const bName = document.getElementById('bank-name').value;
+                const bUser = document.getElementById('bank-user').value;
+                const bNum = document.getElementById('bank-number').value;
+                if(!bName || !bUser || !bNum) return alert("Lengkapi data Bank!");
+                detail = `Transfer: ${bName} (A.n ${bUser}, No: ${bNum})`;
+            } else if(method === 'COD') {
+                detail = "Metode: COD (Bayar di Tempat)";
+            }
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            orders.push({ time: new Date().toLocaleString(), item: selectedP.name, detail });
+            localStorage.setItem('orders', JSON.stringify(orders));
+            alert("Pesanan Berhasil Disimpan!");
+            closeModal();
+        }
+
+        window.onload = () => { 
+            if(sessionStorage.getItem('isLoggedIn')) updateNav(true, sessionStorage.getItem('isLoggedIn')==='admin'); 
+            renderHome(); 
+        };
+    </script>
+</body>
+</html>
